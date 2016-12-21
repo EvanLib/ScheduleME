@@ -17,7 +17,6 @@ func main() {
 
 	ug, err := models.NewUserGorm("root:lol626465@/me_schedule?charset=utf8&parseTime=True&loc=Local")
 	eg, err := models.NewEventGorm("root:lol626465@/me_schedule?charset=utf8&parseTime=True&loc=Local")
-	sg, err := models.NewSchedulsGorm("root:lol626465@/me_schedule?charset=utf8&parseTime=True&loc=Local")
 	if err != nil {
 		panic(err)
 	}
@@ -25,7 +24,7 @@ func main() {
 	indexView = views.NewView("bootstrap", "views/index.html")
 	//Create controllers
 	ug.DestructiveReset()
-	usersC := controllers.NewUsers(ug, eg, sg)
+	usersC := controllers.NewUsers(ug)
 	eventsC := controllers.NewEvents(eg)
 
 	//Create a mux
