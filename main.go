@@ -15,8 +15,8 @@ var indexView *views.View
 
 func main() {
 
-	ug, err := models.NewUserGorm("root:lol626465@/me_schedule?charset=utf8&parseTime=True&loc=Local")
-	eg, err := models.NewEventGorm("root:lol626465@/me_schedule?charset=utf8&parseTime=True&loc=Local")
+	ug, err := models.NewUserGorm("root:@/me_schedule?charset=utf8&parseTime=True&loc=Local")
+	eg, err := models.NewEventGorm("root:@/me_schedule?charset=utf8&parseTime=True&loc=Local")
 	if err != nil {
 		panic(err)
 	}
