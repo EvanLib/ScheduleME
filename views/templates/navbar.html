@@ -1,0 +1,36 @@
+{{define "navbar"}}
+<div class="col-sm-3 sidebar">
+  <nav class="sidebar-nav">
+    <div class="sidebar-header">
+      <button class="nav-toggler nav-toggler-sm sidebar-toggler" type="button" data-toggle="collapse" data-target="#nav-toggleable-sm">
+        <span class="sr-only">Toggle nav</span>
+      </button>
+      <a class="sidebar-brand img-responsive" href="/">
+        <span class="icon icon-lab-flask sidebar-brand-icon"></span>
+      </a>
+    </div>
+
+    <div class="collapse nav-toggleable-sm" id="nav-toggleable-sm">
+
+      <ul class="nav nav-pills nav-stacked">
+        <li class="nav-header">Dashboards</li>
+        <li >
+          
+          <a href="/schedule/today">Today's Schedule</a>
+        </li>
+        <li >
+          <a href="/schedule/list">Schedules</a>
+        </li>
+        <li >
+          <a href="/singup/" data-toggle="modal" data-target="#singupModal">Sign Up</a>
+        </li>
+
+
+      </ul>
+      <hr class="visible-xs m-t">
+    </div>
+  </nav>
+</div>
+{{template "signupmodal"}}
+
+{{end}}
