@@ -11,9 +11,10 @@ import (
 )
 
 type Users struct {
-	NewView   *views.View
-	LoginView *views.View
-	models.UserService
+	NewView          *views.View
+	LoginView        *views.View
+	UserService      models.UserService
+	SchedulesService models.ScheduleService
 }
 type SignupForm struct {
 	Name     string `schema:"name"`
@@ -25,11 +26,12 @@ type LoginForm struct {
 	Password string `schema:"password"`
 }
 
-func NewUsers(us models.UserService) *Users {
+func NewUsers(mi ModelsInteractor) *Users {
 	return &Users{
-		NewView:     views.NewView("bootstrap", "views/users/new.html"),
-		LoginView:   views.NewView("bootstrap", "views/users/login.html"),
-		UserService: us,
+		NewView:          views.NewView("bootstrap", "views/users/new.html"),
+		LoginView:        views.NewView("bootstrap", "views/users/login.html"),
+		UserService:      mi.Users,
+		SchedulesService: mi.Schedules,
 	}
 }
 

@@ -27,12 +27,8 @@ func (sg *Schedulsgorm) DestructiveReset() {
 	sg.AutoMigrate(&Schedule{})
 }
 
-func NewSchedulsGorm(connectionInfo string) (*Schedulsgorm, error) {
-	db, err := gorm.Open("mysql", connectionInfo)
-	if err != nil {
-		return nil, err
-	}
-	return &Schedulsgorm{db}, nil
+func NewSchedulsGorm(db *gorm.DB) *Schedulsgorm {
+	return &Schedulsgorm{db}
 }
 
 //CRUD Read Functions

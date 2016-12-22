@@ -42,12 +42,8 @@ func (ug *UserGorm) DestructiveReset() {
 	ug.AutoMigrate(&Schedule{})
 	ug.Model(&Schedule{}).Related(&User{})
 }
-func NewUserGorm(connectionInfo string) (*UserGorm, error) {
-	db, err := gorm.Open("mysql", connectionInfo)
-	if err != nil {
-		return nil, err
-	}
-	return &UserGorm{db}, nil
+func NewUserGorm(db *gorm.DB) *UserGorm {
+	return &UserGorm{db}
 }
 
 func (ug *UserGorm) ByID(id uint) *User {

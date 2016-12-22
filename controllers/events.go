@@ -9,9 +9,10 @@ import (
 )
 
 type Events struct {
-	NewView    *views.View
-	EventsView *views.View
-	models.EventService
+	NewView      *views.View
+	EventsView   *views.View
+	UserService  models.UserService
+	EventService models.EventService
 }
 
 type EventForm struct {
@@ -19,11 +20,12 @@ type EventForm struct {
 	Description string `scheme:"description"`
 }
 
-func NewEvents(es models.EventService) *Events {
+func NewEvents(mi ModelsInteractor) *Events {
 	return &Events{
 		NewView:      views.NewView("bootstrap", "views/events/new.html"),
 		EventsView:   views.NewView("bootstrap", "views/events/index.html"),
-		EventService: es,
+		UserService:  mi.Users,
+		EventService: mi.Events,
 	}
 }
 
@@ -32,6 +34,13 @@ func (e *Events) New(w http.ResponseWriter, r *http.Request) {
 }
 
 func (e Events) Index(w http.ResponseWriter, r *http.Request) {
+	cookie, err := r.Cookie("remember_token")
+	if err != nil {
+		fmt.Fprintln(w, "Err retrivieing cookie: ", err)
+	}
+	fmt.Fprintln(w, "RememberToken is:", cookie.Value)
+	user := e.UserService.ByRemember(cookie.Value)
+	fmt.Println(user.ID)
 	events := e.EventService.GetAll()
 
 	e.EventsView.Render(w, events)

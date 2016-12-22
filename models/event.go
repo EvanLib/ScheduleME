@@ -27,12 +27,8 @@ func (eg *EventGorm) DestructiveReset() {
 	eg.AutoMigrate(&Event{})
 }
 
-func NewEventGorm(connectionInfo string) (*EventGorm, error) {
-	db, err := gorm.Open("mysql", connectionInfo)
-	if err != nil {
-		return nil, err
-	}
-	return &EventGorm{db}, nil
+func NewEventGorm(db *gorm.DB) *EventGorm {
+	return &EventGorm{db}
 }
 
 //CRUD Read Functions
