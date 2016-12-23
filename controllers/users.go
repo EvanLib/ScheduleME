@@ -83,6 +83,7 @@ func (u *Users) Login(w http.ResponseWriter, r *http.Request) {
 	user := u.UserService.Authenticate(form.Email, form.Password)
 	if user == nil {
 		fmt.Fprintln(w, "Invalid Login")
+		return
 	}
 
 	if err := u.signIn(w, user); err != nil {

@@ -36,13 +36,16 @@ func (e *Events) New(w http.ResponseWriter, r *http.Request) {
 func (e Events) Index(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie("remember_token")
 	if err != nil {
-		fmt.Fprintln(w, "Err retrivieing cookie: ", err)
+		http.Redirect(w, r, "/login", http.StatusFound)
+		return
 	}
-	fmt.Fprintln(w, "RememberToken is:", cookie.Value)
 	user := e.UserService.ByRemember(cookie.Value)
-	fmt.Println(user.ID)
-	events := e.EventService.GetAll()
+	if user == nil {
+		http.Redirect(w, r, "/login", http.StatusFound)
+		return
+	}
 
+	events := e.EventService.GetAll()
 	e.EventsView.Render(w, events)
 }
 
@@ -58,6 +61,7 @@ func (e *Events) Create(w http.ResponseWriter, r *http.Request) {
 		Title:       form.Title,
 		Description: form.Description,
 	}
+
 	e.EventService.Create(event)
 	http.Redirect(w, r, "/events", http.StatusFound)
 }

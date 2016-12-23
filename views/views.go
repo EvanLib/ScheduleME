@@ -14,6 +14,10 @@ type View struct {
 	Layout   string
 }
 
+type SessionData struct {
+	Data interface{}
+}
+
 func layoutfiles() []string {
 	files, err := filepath.Glob(LayoutDir + "/*.html")
 	if err != nil {
@@ -35,7 +39,9 @@ func NewView(layout string, files ...string) *View {
 	}
 }
 func (v *View) Render(w http.ResponseWriter, data interface{}) error {
-	fmt.Println(data)
-
-	return v.Template.ExecuteTemplate(w, v.Layout, data)
+	packageData := &SessionData{
+		Data: data,
+	}
+	fmt.Println(packageData)
+	return v.Template.ExecuteTemplate(w, v.Layout, &packageData)
 }

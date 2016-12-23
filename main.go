@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -15,11 +16,13 @@ import (
 var indexView *views.View
 
 func main() {
-	db, err := gorm.Open("mysql", "root:NOTMYPASSWORD@/me_schedule?charset=utf8&parseTime=True&loc=Local")
+	db, err := gorm.Open("mysql", "root:somepassword@/me_schedule?charset=utf8&parseTime=True&loc=Local")
 	if err != nil {
+		fmt.Println(err)
 		panic(err)
 	}
-
+	//LOGGING
+	db.LogMode(false)
 	ug := models.NewUserGorm(db)
 	eg := models.NewEventGorm(db)
 	sg := models.NewSchedulsGorm(db)
@@ -37,13 +40,16 @@ func main() {
 	indexView = views.NewView("bootstrap", "views/index.html")
 	//Create controllers
 	ug.DestructiveReset()
+	eg.DestructiveReset()
+	sg.DestructiveReset()
+
 	usersC := controllers.NewUsers(modelsInteractor)
 	eventsC := controllers.NewEvents(modelsInteractor)
 	scheduleC := controllers.NewSchedules(modelsInteractor)
 
 	//Create a mux
 	r := mux.NewRouter()
-	r.HandleFunc("/", Index)
+
 	// User Handles
 	r.HandleFunc("/cookietest", usersC.CookieTest).Methods("GET")
 	r.HandleFunc("/signup", usersC.New).Methods("GET")
@@ -56,6 +62,8 @@ func main() {
 	r.HandleFunc("/events", eventsC.Index).Methods("GET")
 	//Schedules Handles
 	r.HandleFunc("/schedules/new", scheduleC.Create).Methods("POST")
+	r.HandleFunc("/schedules/new", scheduleC.New).Methods("GET")
+	r.HandleFunc("/schedules/{id:[0-9]+}", scheduleC.SingleSchedule).Methods("GET")
 
 	// This will serve files under http://localhost:8000/static/<filename>
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("static_files/"))))
@@ -70,9 +78,4 @@ func main() {
 
 	log.Fatal(srv.ListenAndServe())
 
-}
-
-func Index(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html")
-	indexView.Render(w, nil)
 }

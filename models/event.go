@@ -23,7 +23,7 @@ type EventGorm struct {
 }
 
 func (eg *EventGorm) DestructiveReset() {
-	eg.DropTable(&Event{})
+	//eg.DropTable(&Event{})
 	eg.AutoMigrate(&Event{})
 }
 

@@ -9,6 +9,7 @@ type Schedule struct {
 	gorm.Model
 	Title       string
 	Description string
+	Events      []Event `gorm:"many2many:schedule_events;"`
 }
 type ScheduleService interface {
 	ByID(id uint) *Schedule
@@ -16,6 +17,7 @@ type ScheduleService interface {
 	Create(Schedule *Schedule) error
 	Update(Schedule *Schedule) error
 	Delete(Schedule *Schedule) error
+	AddEvent(Schedule *Schedule, Event *Event)
 }
 
 type Schedulsgorm struct {
@@ -23,12 +25,19 @@ type Schedulsgorm struct {
 }
 
 func (sg *Schedulsgorm) DestructiveReset() {
-	sg.DropTable(&Schedule{})
+	//sg.DropTable(&Schedule{})
 	sg.AutoMigrate(&Schedule{})
 }
 
 func NewSchedulsGorm(db *gorm.DB) *Schedulsgorm {
 	return &Schedulsgorm{db}
+}
+
+//Event Functions
+func (sg *Schedulsgorm) AddEvent(Schedule *Schedule, Event *Event) {
+	sg.Model(&Schedule).Association("Events")
+	sg.Model(&Schedule).Association("Events").Append(Event)
+
 }
 
 //CRUD Read Functions
@@ -42,11 +51,12 @@ func (sg *Schedulsgorm) GetAll() []Schedule {
 	return allSchedules
 }
 
-func (ug *Schedulsgorm) byQuery(query *gorm.DB) *Schedule {
+func (sg *Schedulsgorm) byQuery(query *gorm.DB) *Schedule {
 	ret := &Schedule{}
 	err := query.First(ret).Error
 	switch err {
 	case nil:
+		sg.Model(&ret).Related(&ret.Events, "Events")
 		return ret
 	case gorm.ErrRecordNotFound:
 		return nil

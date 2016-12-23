@@ -37,10 +37,9 @@ type UserGorm struct {
 }
 
 func (ug *UserGorm) DestructiveReset() {
-	ug.DropTable(&User{})
+	//ug.DropTable(&User{})
 	ug.AutoMigrate(&User{})
-	ug.AutoMigrate(&Schedule{})
-	ug.Model(&Schedule{}).Related(&User{})
+
 }
 func NewUserGorm(db *gorm.DB) *UserGorm {
 	return &UserGorm{db}
