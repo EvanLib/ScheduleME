@@ -1,1 +1,3 @@
 *.rb linguist-language=GO
+
+static_files/* linguist-vendored
