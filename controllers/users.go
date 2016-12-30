@@ -64,11 +64,30 @@ func (u *Users) Create(w http.ResponseWriter, r *http.Request) {
 func (u *Users) CookieTest(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie("remember_token")
 	if err != nil {
-		fmt.Fprintln(w, "Err retrivieing cookie: ", err)
+		http.Redirect(w, r, "/login", http.StatusFound)
 	}
-	fmt.Fprintln(w, "RememberToken is:", cookie.Value)
 	user := u.UserService.ByRemember(cookie.Value)
-	fmt.Fprintln(w, "User is : ", user)
+	if user == nil {
+		http.Redirect(w, r, "/login", http.StatusFound)
+	}
+
+}
+
+func (u *Users) AuthenticateCookie(fn http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		cookie, err := r.Cookie("remember_token")
+
+		if err != nil {
+			http.Redirect(w, r, "/login", http.StatusFound)
+			return
+		}
+		user := u.UserService.ByRemember(cookie.Value)
+		if user == nil {
+			http.Redirect(w, r, "/login", http.StatusFound)
+			return
+		}
+		fn(w, r)
+	}
 }
 
 //Authentication

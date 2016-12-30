@@ -34,16 +34,6 @@ func (e *Events) New(w http.ResponseWriter, r *http.Request) {
 }
 
 func (e Events) Index(w http.ResponseWriter, r *http.Request) {
-	cookie, err := r.Cookie("remember_token")
-	if err != nil {
-		http.Redirect(w, r, "/login", http.StatusFound)
-		return
-	}
-	user := e.UserService.ByRemember(cookie.Value)
-	if user == nil {
-		http.Redirect(w, r, "/login", http.StatusFound)
-		return
-	}
 
 	events := e.EventService.GetAll()
 	e.EventsView.Render(w, events)

@@ -21,7 +21,7 @@ func main() {
 		fmt.Println(err)
 		panic(err)
 	}
-	//LOGGING
+	//LOGGIN
 	db.LogMode(false)
 	ug := models.NewUserGorm(db)
 	eg := models.NewEventGorm(db)
@@ -37,7 +37,6 @@ func main() {
 		panic(err)
 	}
 
-	indexView = views.NewView("bootstrap", "views/index.html")
 	//Create controllers
 	ug.DestructiveReset()
 	eg.DestructiveReset()
@@ -56,14 +55,16 @@ func main() {
 	r.HandleFunc("/signup", usersC.Create).Methods("POST")
 	r.HandleFunc("/login", usersC.LoginGet).Methods("GET")
 	r.HandleFunc("/login", usersC.Login).Methods("POST")
+
 	//Events Handle
-	r.HandleFunc("/events/new", eventsC.New).Methods("GET")
-	r.HandleFunc("/events/new", eventsC.Create).Methods("POST")
-	r.HandleFunc("/events", eventsC.Index).Methods("GET")
+	r.HandleFunc("/events/new", usersC.AuthenticateCookie(eventsC.New)).Methods("GET")
+	r.HandleFunc("/events/new", usersC.AuthenticateCookie(eventsC.Create)).Methods("POST")
+	r.HandleFunc("/events", usersC.AuthenticateCookie(eventsC.Index)).Methods("GET")
+
 	//Schedules Handles
-	r.HandleFunc("/schedules/new", scheduleC.Create).Methods("POST")
-	r.HandleFunc("/schedules/new", scheduleC.New).Methods("GET")
-	r.HandleFunc("/schedules/{id:[0-9]+}", scheduleC.SingleSchedule).Methods("GET")
+	r.HandleFunc("/schedules/new", usersC.AuthenticateCookie(scheduleC.Create)).Methods("POST")
+	r.HandleFunc("/schedules/new", usersC.AuthenticateCookie(scheduleC.New)).Methods("GET")
+	r.HandleFunc("/schedules/{id:[0-9]+}", usersC.AuthenticateCookie(scheduleC.SingleSchedule)).Methods("GET")
 
 	// This will serve files under http://localhost:8000/static/<filename>
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("static_files/"))))
